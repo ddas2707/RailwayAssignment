@@ -1,0 +1,34 @@
+{
+  "name": "railwayp3",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "lint": "next lint"
+  },
+  "dependencies": {
+    "@eslint/config-array": "^0.17.1",
+    "@eslint/object-schema": "^2.1.4",
+    "glob": "^11.0.0",
+    "lru-cache": "^11.0.0",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.2",
+    "next": "14.2.5",
+    "pdf-lib": "^1.17.1",
+    "react": "^18",
+    "react-dom": "^18",
+    "rimraf": "^6.0.1"
+  },
+  "devDependencies": {
+    "@types/node": "^20",
+    "@types/react": "^18",
+    "@types/react-dom": "^18",
+    "eslint": "^8",
+    "eslint-config-next": "14.2.5",
+    "postcss": "^8",
+    "tailwindcss": "^3.4.1",
+    "typescript": "^5"
+  }
+}
