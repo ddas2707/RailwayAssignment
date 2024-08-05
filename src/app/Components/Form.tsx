@@ -1,4 +1,3 @@
-// app/Components/Form.tsx
 'use client';
 
 import React, { useState } from 'react';
@@ -35,6 +34,14 @@ const Form: React.FC = () => {
 
     if (response.ok) {
       setModalMessage('Your data has been submitted successfully!');
+      const blob = await response.blob();
+      const url = window.URL.createObjectURL(blob);
+      const a = document.createElement('a');
+      a.href = url;
+      a.download = 'user_details.pdf';
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
     } else {
       setModalMessage('Error submitting your data.');
     }
@@ -48,13 +55,13 @@ const Form: React.FC = () => {
 
   return (
     <div>
-      <form onSubmit={handleSubmit} className="text-black">
+      <form onSubmit={handleSubmit}>
         <input name="name" placeholder="Name" value={formData.name} onChange={handleChange} required />
         <input name="email" placeholder="Email" value={formData.email} onChange={handleChange} required />
         <input name="phone" placeholder="Phone Number" value={formData.phone} onChange={handleChange} required />
         <input name="address" placeholder="Address" value={formData.address} onChange={handleChange} required />
         <input name="age" placeholder="Age" value={formData.age} onChange={handleChange} required />
-        <button className='bg-white' type="submit">Submit</button>
+        <button type="submit">Submit</button>
       </form>
       <Modal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} />
     </div>

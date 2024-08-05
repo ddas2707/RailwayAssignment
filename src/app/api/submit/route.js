@@ -9,10 +9,6 @@ export async function POST(req) {
 
         const { name, email, phone, address, age } = await req.json();
 
-        // Save to MongoDB
-        const user = new User({ name, email, phone, address, age });
-        await user.save();
-
         // Generate PDF
         const pdfDoc = await PDFDocument.create();
         const page = pdfDoc.addPage([600, 400]);
@@ -26,10 +22,17 @@ export async function POST(req) {
 
         const pdfBytes = await pdfDoc.save();
 
-        // Create a readable stream from the PDF bytes
+        // Convert Uint8Array to Buffer
+        const pdfBuffer = Buffer.from(pdfBytes);
+
+        // Save to MongoDB
+        const user = new User({ name, email, phone, address, age, pdf: pdfBuffer });
+        await user.save();
+
+        // Create a readable stream from the PDF buffer
         const stream = new ReadableStream({
             start(controller) {
-                controller.enqueue(pdfBytes);
+                controller.enqueue(pdfBuffer);
                 controller.close();
             }
         });
