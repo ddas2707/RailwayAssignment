@@ -12,7 +12,7 @@ const Form: React.FC = () => {
     department: '',
     designation: '',
     placeOfWork: '',
-    otp: '', // Add OTP field
+    code: '', // Add OTP field
   });
 
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -33,12 +33,12 @@ const Form: React.FC = () => {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ phone: formData.phone }),
+      body: JSON.stringify({ email: formData.email }),
     });
 
     if (response.ok) {
       setOtpSent(true);
-      setModalMessage('OTP has been sent to your phone.');
+      setModalMessage('OTP has been sent to your email.');
       setIsModalOpen(true);
     } else {
       setModalMessage('Error sending OTP.');
@@ -46,38 +46,34 @@ const Form: React.FC = () => {
     }
   };
 
-
-const verifyOtp = async () => {
-  try {
+  const verifyOtp = async () => {
+    try {
       const response = await fetch('/api/verify-otp', {
-          method: 'POST',
-          headers: {
-              'Content-Type': 'application/json',
-          },
-          body: JSON.stringify({ phone: formData.phone, code: formData.otp }), // Send 'code' instead of 'otp'
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: JSON.stringify({ email: formData.email, code: formData.code }), // Send 'code' instead of 'otp'
       });
 
       if (response.ok) {
-          const result = await response.json();
-          console.log(result.status);
-          if (result.status === 'approved') {
-              setOtpVerified(true);
-              setModalMessage('OTP verified successfully!');
-          } else {
-              setModalMessage('Invalid OTP. Please try again ,ok.');
-          }
+        const result = await response.json();
+        if (result.status === 'approved') {
+          setOtpVerified(true);
+          setModalMessage('OTP verified successfully!');
+        } else {
+          setModalMessage('Invalid OTP. Please try again.');
+        }
       } else {
-          const error = await response.json();
-          setModalMessage(`Error verifying OTP2: ${error.message || 'Unknown error'}`);
+        const error = await response.json();
+        setModalMessage(`Error verifying OTP1: ${error.message || 'Unknown error'}`);
       }
-  } catch (error:any) {
-      setModalMessage(`Error verifying OTP1: ${error.message || 'Unknown error'}`);
-  } finally {
+    } catch (error: any) {
+      setModalMessage(`Error verifying OTP2: ${error.message || 'Unknown error'}`);
+    } finally {
       setIsModalOpen(true);
-  }
-};
-
-
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -159,37 +155,7 @@ const verifyOtp = async () => {
             required
             className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
           />
-          <button
-            type="button"
-            onClick={sendOtp}
-            disabled={otpSent}
-            className={`mt-2 py-2 px-4 rounded-lg text-white ${otpSent ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} transition`}
-          >
-            Send OTP
-          </button>
         </div>
-
-        {otpSent && (
-          <div className="flex flex-col">
-            <label htmlFor="otp" className="text-gray-600">Enter OTP</label>
-            <input
-              id="otp"
-              name="otp"
-              placeholder="Enter OTP"
-              value={formData.otp}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
-            />
-            <button
-              type="button"
-              onClick={verifyOtp}
-              className="mt-2 py-2 px-4 rounded-lg bg-green-500 text-black hover:bg-green-600 transition"
-            >
-              Verify OTP
-            </button>
-          </div>
-        )}
 
         <div className="flex flex-col">
           <label htmlFor="address" className="text-gray-600">Address</label>
@@ -256,6 +222,37 @@ const verifyOtp = async () => {
           />
         </div>
 
+        {otpSent && (
+          <div className="flex flex-col">
+            <label htmlFor="otp" className="text-gray-600">Enter OTP</label>
+            <input
+              id="code"
+              name="code"
+              placeholder="Enter OTP"
+              value={formData.code}
+              onChange={handleChange}
+              required
+              className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
+            />
+            <button
+              type="button"
+              onClick={verifyOtp}
+              className="mt-2 py-2 px-4 rounded-lg bg-green-500 text-black hover:bg-green-600 transition"
+            >
+              Verify OTP
+            </button>
+          </div>
+        )}
+
+        <button
+          type="button"
+          onClick={sendOtp}
+          disabled={otpSent}
+          className={`mt-2 py-2 px-4 rounded-lg text-white ${otpSent ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} transition`}
+        >
+          Send OTP
+        </button>
+
         <button
           type="submit"
           className="w-full py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
@@ -269,35 +266,3 @@ const verifyOtp = async () => {
 };
 
 export default Form;
-
-
-
-
-//   const verifyOtp = async () => {
-//     try {
-//         const response = await fetch('/api/verify-otp', {
-//             method: 'POST',
-//             headers: {
-//                 'Content-Type': 'application/json',
-//             },
-//             body: JSON.stringify({ phone: formData.phone, otp: formData.otp }), // Ensure OTP is sent correctly
-//         });
-
-//         if (response.ok) {
-//             const result = await response.json(); // Retrieve response content
-//             if (result.status === 'approved') { // Check response content for success status
-//                 setOtpVerified(true);
-//                 setModalMessage('OTP verified successfully!');
-//             } else {
-//                 setModalMessage('Invalid OTP. Please try again.');
-//             }
-//         } else {
-//             const error = await response.json();
-//             setModalMessage(`Error verifying OTP: ${error.message || 'Unknown error'}`);
-//         }
-//     } catch (error:any) {
-//         setModalMessage(`Error verifying OTP: ${error.message || 'Unknown error'}`);
-//     } finally {
-//         setIsModalOpen(true);
-//     }
-// };
