@@ -12,6 +12,7 @@
     "@eslint/config-array": "^0.17.1",
     "@eslint/object-schema": "^2.1.4",
     "glob": "^11.0.0",
+    "iconv-lite": "^0.6.3",
     "ioredis": "^5.4.1",
     "libphonenumber-js": "^1.11.5",
     "lru-cache": "^11.0.0",
@@ -20,10 +21,12 @@
     "next": "14.2.5",
     "nodemailer": "^6.9.14",
     "pdf-lib": "^1.17.1",
+    "pdfkit": "^0.15.0",
     "react": "^18",
     "react-dom": "^18",
     "rimraf": "^6.0.1",
-    "twilio": "^5.2.2"
+    "twilio": "^5.2.2",
+    "uuid": "^10.0.0"
   },
   "devDependencies": {
     "@types/node": "^20",

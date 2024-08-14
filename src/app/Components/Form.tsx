@@ -15,6 +15,7 @@ const Form: React.FC = () => {
     code: '', // Add OTP field
   });
 
+  const [image, setImage] = useState<File | null>(null); // State for the uploaded image 
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [otpSent, setOtpSent] = useState(false);
@@ -25,6 +26,13 @@ const Form: React.FC = () => {
       ...formData,
       [e.target.name]: e.target.value,
     });
+  };
+
+  // this is the function for handling the images 
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setImage(e.target.files[0]);
+    }
   };
 
   const sendOtp = async () => {
@@ -100,6 +108,54 @@ const Form: React.FC = () => {
     }
   };
   
+  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+  //   e.preventDefault();
+
+  //   if (!otpVerified) {
+  //     setModalMessage('Please verify your OTP before submitting.');
+  //     setIsModalOpen(true);
+  //     return;
+  //   }
+
+  //   const formDataWithImage = new FormData();
+  //   formDataWithImage.append('name', formData.name);
+  //   formDataWithImage.append('email', formData.email);
+  //   formDataWithImage.append('phone', formData.phone);
+  //   formDataWithImage.append('address', formData.address);
+  //   formDataWithImage.append('age', formData.age);
+  //   formDataWithImage.append('department', formData.department);
+  //   formDataWithImage.append('designation', formData.designation);
+  //   formDataWithImage.append('placeOfWork', formData.placeOfWork);
+  //   formDataWithImage.append('code', formData.code);
+  //   if (image) {
+  //     formDataWithImage.append('image', image);
+  //   }
+
+  //   const response = await fetch('/api/submit', {
+  //     method: 'POST',
+  //     headers: {
+  //       'Content-Type': 'application/json',
+  //     },
+  //     body: JSON.stringify(formData),
+  //   });
+
+  //   if (response.ok) {
+  //     setModalMessage('Your data has been submitted successfully!');
+  //     const blob = await response.blob();
+  //     const url = window.URL.createObjectURL(blob);
+  //     const a = document.createElement('a');
+  //     a.href = url;
+  //     a.download = 'user_details.pdf';
+  //     document.body.appendChild(a);
+  //     a.click();
+  //     a.remove();
+  //   } else {
+  //     setModalMessage('Error submitting your data.');
+  //   }
+
+  //   setIsModalOpen(true);
+  // };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 
@@ -109,12 +165,23 @@ const Form: React.FC = () => {
       return;
     }
 
+    const formDataWithImage = new FormData();
+    formDataWithImage.append('name', formData.name);
+    formDataWithImage.append('email', formData.email);
+    formDataWithImage.append('phone', formData.phone);
+    formDataWithImage.append('address', formData.address);
+    formDataWithImage.append('age', formData.age);
+    formDataWithImage.append('department', formData.department);
+    formDataWithImage.append('designation', formData.designation);
+    formDataWithImage.append('placeOfWork', formData.placeOfWork);
+    formDataWithImage.append('code', formData.code);
+    if (image) {
+      formDataWithImage.append('image', image);
+    }
+
     const response = await fetch('/api/submit', {
       method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-      },
-      body: JSON.stringify(formData),
+      body: formDataWithImage, // Send as FormData
     });
 
     if (response.ok) {
@@ -132,7 +199,7 @@ const Form: React.FC = () => {
     }
 
     setIsModalOpen(true);
-  };
+};
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -246,6 +313,20 @@ const Form: React.FC = () => {
             className="border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
+
+        {/* this is the field for uploading images ---> start */}
+        <div className="flex flex-col">
+          <label htmlFor="image" className="text-gray-600">Upload Image</label>
+          <input
+            id="image"
+            name="image"
+            type="file"
+            onChange={handleImageChange}
+            className="border border-gray-300 rounded-lg p-2 mt-1"
+          />
+        </div>
+        {/* this is the field for uploading images ----> end   */}
+
 
         {otpSent && (
           <div className="flex flex-col">
