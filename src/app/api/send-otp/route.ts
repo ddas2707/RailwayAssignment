@@ -1,7 +1,9 @@
 import { NextRequest, NextResponse } from 'next/server';
 import nodemailer from 'nodemailer';
+import fs from 'fs';
+import path from 'path';
 
-let otps = new Map<string, string>();
+const otpFilePath = path.resolve('./otps.json');
 
 export async function POST(req: NextRequest) {
     try {
@@ -12,10 +14,9 @@ export async function POST(req: NextRequest) {
 
         console.log(`Storing OTP ${otp} for email: ${emailLower}`);
 
-        otps.set(emailLower, otp);
-        console.log(otps);
-
-        console.log(`Current OTPs stored: ${JSON.stringify([...otps.entries()])}`);
+        let otps = JSON.parse(fs.readFileSync(otpFilePath, 'utf-8'));
+        otps[emailLower] = otp;
+        fs.writeFileSync(otpFilePath, JSON.stringify(otps));
 
         const transporter = nodemailer.createTransport({
             host: process.env.SMTP_HOST,
@@ -40,47 +41,3 @@ export async function POST(req: NextRequest) {
         return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
     }
 }
-
-
-
-
-// import { NextRequest, NextResponse } from 'next/server';
-// import nodemailer from 'nodemailer';
-
-// let otps = new Map<string, string>();
-
-// export async function POST(req: NextRequest) {
-//     try {
-//         const { email } = await req.json();
-
-//         // Generate a 4-digit OTP
-//         const otp = Math.floor(1000 + Math.random() * 9000).toString();
-
-//         // Store the OTP against the email
-//         otps.set(email, otp);
-
-//         // Set up email transporter
-//         const transporter = nodemailer.createTransport({
-//             host: process.env.SMTP_HOST, // Your SMTP server host
-//             port: Number(process.env.SMTP_PORT), // Your SMTP server port
-//             secure: process.env.SMTP_PORT === '465', // true for port 465, false for port 587
-//             auth: {
-//                 user: process.env.SMTP_USER, // Your SMTP username
-//                 pass: process.env.SMTP_PASSWORD, // Your SMTP password
-//             },
-//         });
-
-//         // Send the OTP to the user's email
-//         await transporter.sendMail({
-//             from: process.env.SMTP_USER, // Your SMTP username
-//             to: email,
-//             subject: 'Your OTP Code',
-//             text: `Your OTP code is ${otp}`,
-//         });
-
-//         return NextResponse.json({ message: 'OTP sent successfully' });
-//     } catch (err) {
-//         console.error(err);
-//         return NextResponse.json({ message: 'Something went wrong' }, { status: 500 });
-//     }
-// }

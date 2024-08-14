@@ -1,4 +1,3 @@
-// src/app/api/submit/route.js
 import { NextResponse } from 'next/server';
 import connectToDatabase from '../../../lib/mongodb';
 import User from '../../../models/User';
@@ -31,25 +30,25 @@ export async function POST(req) {
         const pdfBuffer = Buffer.from(pdfBytes);
 
         // Save to MongoDB
-        const user = new User({ name, email, phone, address, age, department, designation, placeOfWork, pdf: pdfBuffer });
+        const user = new User({
+            name,
+            email,
+            phone: { value: phone, isVerified: false },
+            address,
+            age,
+            department,
+            designation,
+            placeOfWork,
+            pdf: pdfBuffer
+        });
         await user.save();
 
-        // Create a readable stream from the PDF buffer
-        const stream = new ReadableStream({
-            start(controller) {
-                controller.enqueue(pdfBuffer);
-                controller.close();
-            }
-        });
-
-        const response = new NextResponse(stream, {
+        return new NextResponse(pdfBuffer, {
             headers: {
                 'Content-Type': 'application/pdf',
                 'Content-Disposition': 'attachment; filename=user_details.pdf',
             }
         });
-
-        return response;
     } catch (error) {
         console.error(error);
         return NextResponse.json({ error: 'Error saving user data' }, { status: 500 });

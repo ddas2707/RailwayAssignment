@@ -46,6 +46,35 @@ const Form: React.FC = () => {
     }
   };
 
+  // const verifyOtp = async () => {
+  //   try {
+  //     const response = await fetch('/api/verify-otp', {
+  //       method: 'POST',
+  //       headers: {
+  //         'Content-Type': 'application/json',
+  //       },
+  //       body: JSON.stringify({ email: formData.email, code: formData.code }), // Send 'code' instead of 'otp'
+  //     });
+
+  //     if (response.ok) {
+  //       const result = await response.json();
+  //       if (result.status === 'approved') {
+  //         setOtpVerified(true);
+  //         setModalMessage('OTP verified successfully!');
+  //       } else {
+  //         setModalMessage('Invalid OTP. Please try again.');
+  //       }
+  //     } else {
+  //       const error = await response.json();
+  //       setModalMessage(`Error verifying OTP1: ${error.message || 'Unknown error'}`);
+  //     }
+  //   } catch (error: any) {
+  //     setModalMessage(`Error verifying OTP2: ${error.message || 'Unknown error'}`);
+  //   } finally {
+  //     setIsModalOpen(true);
+  //   }
+  // };
+
   const verifyOtp = async () => {
     try {
       const response = await fetch('/api/verify-otp', {
@@ -55,26 +84,22 @@ const Form: React.FC = () => {
         },
         body: JSON.stringify({ email: formData.email, code: formData.code }), // Send 'code' instead of 'otp'
       });
-
+  
+      const result = await response.json();
+  
       if (response.ok) {
-        const result = await response.json();
-        if (result.status === 'approved') {
-          setOtpVerified(true);
-          setModalMessage('OTP verified successfully!');
-        } else {
-          setModalMessage('Invalid OTP. Please try again.');
-        }
+        setOtpVerified(true);
+        setModalMessage('OTP verified successfully!');
       } else {
-        const error = await response.json();
-        setModalMessage(`Error verifying OTP1: ${error.message || 'Unknown error'}`);
+        setModalMessage(`Invalid OTP. Please try again.`);
       }
     } catch (error: any) {
-      setModalMessage(`Error verifying OTP2: ${error.message || 'Unknown error'}`);
+      setModalMessage(`Error verifying OTP: ${error.message || 'Unknown error'}`);
     } finally {
       setIsModalOpen(true);
     }
   };
-
+  
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
 

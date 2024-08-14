@@ -17,7 +17,7 @@ const UserSchema = new mongoose.Schema({
             unique: true
         },
         isVerified: {
-            type: boolean,
+            type: Boolean,
             default: false,
         }
     },
@@ -43,7 +43,6 @@ const UserSchema = new mongoose.Schema({
     },
     code: {
         type: Number,
-        required: true
     },
     pdf: Buffer,
 });
