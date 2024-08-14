@@ -1,9 +1,28 @@
 import { NextResponse } from 'next/server';
 import { PDFDocument } from 'pdf-lib';
 import { Readable } from 'stream';
+import mongoose from 'mongoose';
+
+// Define a Mongoose model for storing PDFs
+const pdfSchema = new mongoose.Schema({
+    name: String,
+    email: String,
+    phone: String,
+    address: String,
+    age: String,
+    department: String,
+    designation: String,
+    placeOfWork: String,
+    pdf: Buffer, // Store the PDF as binary data
+});
+
+const PdfModel = mongoose.model('Pdf', pdfSchema);
 
 export async function POST(request) {
     try {
+        // Connect to MongoDB
+        await mongoose.connect(process.env.MONGODB_URI);
+
         // Parse the form data
         const data = await request.formData();
 
@@ -55,18 +74,37 @@ export async function POST(request) {
         const { width, height } = img.scale(0.5); // Scale the image as needed
         page.drawImage(img, {
             x: 400, // X coordinate for image (right side)
-            y: 150, // Y coordinate for image
+            y: 250,  // Y coordinate for image
             width: width,
             height: height,
         });
 
         // Serialize the PDF document
         const pdfBytes = await pdfDoc.save();
+
+        // Convert the PDF bytes to a Buffer
+        const pdfBuffer = Buffer.from(pdfBytes);
+
+        // Save PDF to database
+        const pdfDocument = new PdfModel({
+            name,
+            email,
+            phone,
+            address,
+            age,
+            department,
+            designation,
+            placeOfWork,
+            pdf: pdfBuffer, // Store the PDF buffer in the database
+        });
+
+        await pdfDocument.save();
+
+        // Return the PDF file as a response
         const pdfStream = new Readable();
         pdfStream.push(pdfBytes);
         pdfStream.push(null);
 
-        // Return the PDF file as a response
         return new NextResponse(pdfStream, {
             headers: {
                 'Content-Type': 'application/pdf',
@@ -77,6 +115,9 @@ export async function POST(request) {
     } catch (error) {
         console.error(error); // Log the error for debugging
         return NextResponse.json({ error: error.message }, { status: 500 });
+    } finally {
+        // Ensure that Mongoose connection is closed properly
+        await mongoose.disconnect();
     }
 }
 
@@ -111,17 +152,17 @@ export async function POST(request) {
 
 //         // Create a PDF document
 //         const pdfDoc = await PDFDocument.create();
-//         const page = pdfDoc.addPage();
+//         const page = pdfDoc.addPage([600, 400]); // Page size [width, height]
 
 //         // Add text content to PDF
-//         page.drawText(`Name: ${name}`, { y: 700 });
-//         page.drawText(`Email: ${email}`, { y: 670 });
-//         page.drawText(`Phone: ${phone}`, { y: 640 });
-//         page.drawText(`Address: ${address}`, { y: 610 });
-//         page.drawText(`Age: ${age}`, { y: 580 });
-//         page.drawText(`Department: ${department}`, { y: 550 });
-//         page.drawText(`Designation: ${designation}`, { y: 520 });
-//         page.drawText(`Place of Work: ${placeOfWork}`, { y: 490 });
+//         page.drawText(`Name: ${name}`, { x: 50, y: 350, size: 12 });
+//         page.drawText(`Email: ${email}`, { x: 50, y: 330, size: 12 });
+//         page.drawText(`Phone: ${phone}`, { x: 50, y: 310, size: 12 });
+//         page.drawText(`Address: ${address}`, { x: 50, y: 290, size: 12 });
+//         page.drawText(`Age: ${age}`, { x: 50, y: 270, size: 12 });
+//         page.drawText(`Department: ${department}`, { x: 50, y: 250, size: 12 });
+//         page.drawText(`Designation: ${designation}`, { x: 50, y: 230, size: 12 });
+//         page.drawText(`Place of Work: ${placeOfWork}`, { x: 50, y: 210, size: 12 });
 
 //         // Handle image based on its format
 //         let img;
@@ -135,12 +176,13 @@ export async function POST(request) {
 //             }
 //         }
 
-//         // Add image to PDF
+//         // Add image to PDF on the right side
+//         const { width, height } = img.scale(0.7); // Scale the image as needed
 //         page.drawImage(img, {
-//             x: 50,
-//             y: 50,
-//             width: 500,
-//             height: 400,
+//             x: 350, // X coordinate for image (right side)
+//             y: 250, // Y coordinate for image
+//             width: width,
+//             height: height,
 //         });
 
 //         // Serialize the PDF document
@@ -162,3 +204,6 @@ export async function POST(request) {
 //         return NextResponse.json({ error: error.message }, { status: 500 });
 //     }
 // }
+
+
+

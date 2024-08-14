@@ -219,7 +219,7 @@ const Form: React.FC = () => {
             value={formData.name}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
@@ -232,7 +232,7 @@ const Form: React.FC = () => {
             value={formData.email}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black  border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
@@ -245,7 +245,7 @@ const Form: React.FC = () => {
             value={formData.phone}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
+            className="text-black  border border-gray-300 rounded-lg p-2 mt-1 text-black"
           />
         </div>
 
@@ -258,7 +258,7 @@ const Form: React.FC = () => {
             value={formData.address}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black  border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
@@ -271,7 +271,7 @@ const Form: React.FC = () => {
             value={formData.age}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black  border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
@@ -284,7 +284,7 @@ const Form: React.FC = () => {
             value={formData.department}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
@@ -297,7 +297,7 @@ const Form: React.FC = () => {
             value={formData.designation}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
@@ -310,7 +310,7 @@ const Form: React.FC = () => {
             value={formData.placeOfWork}
             onChange={handleChange}
             required
-            className="border border-gray-300 rounded-lg p-2 mt-1"
+            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
           />
         </div>
 
