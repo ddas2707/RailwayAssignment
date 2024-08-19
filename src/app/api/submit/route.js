@@ -3,8 +3,8 @@ import { PDFDocument } from 'pdf-lib';
 import { Readable } from 'stream';
 import mongoose from 'mongoose';
 
-// Define a Mongoose model for storing PDFs
-const pdfSchema = new mongoose.Schema({
+// Check if the model already exists before defining it
+const PdfModel = mongoose.models.Pdf || mongoose.model('Pdf', new mongoose.Schema({
     name: String,
     email: String,
     phone: String,
@@ -14,9 +14,7 @@ const pdfSchema = new mongoose.Schema({
     designation: String,
     placeOfWork: String,
     pdf: Buffer, // Store the PDF as binary data
-});
-
-const PdfModel = mongoose.model('Pdf', pdfSchema);
+}));
 
 export async function POST(request) {
     try {
@@ -126,9 +124,28 @@ export async function POST(request) {
 // import { NextResponse } from 'next/server';
 // import { PDFDocument } from 'pdf-lib';
 // import { Readable } from 'stream';
+// import mongoose from 'mongoose';
+
+// // Define a Mongoose model for storing PDFs
+// const pdfSchema = new mongoose.Schema({
+//     name: String,
+//     email: String,
+//     phone: String,
+//     address: String,
+//     age: String,
+//     department: String,
+//     designation: String,
+//     placeOfWork: String,
+//     pdf: Buffer, // Store the PDF as binary data
+// });
+
+// const PdfModel = mongoose.model('Pdf', pdfSchema);
 
 // export async function POST(request) {
 //     try {
+//         // Connect to MongoDB
+//         await mongoose.connect(process.env.MONGODB_URI);
+
 //         // Parse the form data
 //         const data = await request.formData();
 
@@ -177,21 +194,40 @@ export async function POST(request) {
 //         }
 
 //         // Add image to PDF on the right side
-//         const { width, height } = img.scale(0.7); // Scale the image as needed
+//         const { width, height } = img.scale(0.5); // Scale the image as needed
 //         page.drawImage(img, {
-//             x: 350, // X coordinate for image (right side)
-//             y: 250, // Y coordinate for image
+//             x: 400, // X coordinate for image (right side)
+//             y: 250,  // Y coordinate for image
 //             width: width,
 //             height: height,
 //         });
 
 //         // Serialize the PDF document
 //         const pdfBytes = await pdfDoc.save();
+
+//         // Convert the PDF bytes to a Buffer
+//         const pdfBuffer = Buffer.from(pdfBytes);
+
+//         // Save PDF to database
+//         const pdfDocument = new PdfModel({
+//             name,
+//             email,
+//             phone,
+//             address,
+//             age,
+//             department,
+//             designation,
+//             placeOfWork,
+//             pdf: pdfBuffer, // Store the PDF buffer in the database
+//         });
+
+//         await pdfDocument.save();
+
+//         // Return the PDF file as a response
 //         const pdfStream = new Readable();
 //         pdfStream.push(pdfBytes);
 //         pdfStream.push(null);
 
-//         // Return the PDF file as a response
 //         return new NextResponse(pdfStream, {
 //             headers: {
 //                 'Content-Type': 'application/pdf',
@@ -202,6 +238,9 @@ export async function POST(request) {
 //     } catch (error) {
 //         console.error(error); // Log the error for debugging
 //         return NextResponse.json({ error: error.message }, { status: 500 });
+//     } finally {
+//         // Ensure that Mongoose connection is closed properly
+//         await mongoose.disconnect();
 //     }
 // }
 
