@@ -139,28 +139,26 @@ export async function POST(request) {
         }
 
         // Draw the images in the third column
-        const imageScale = 0.65; // Scale images to fit in the table cells
-        const signatureScale = 0.4 // scale signature image to fit in the table cells
+        const imageScale = 0.4; // Scale images to fit in the table cells
+        const signatureScale = 0.4; // Scale signature image to fit in the table cells
         const imgSize = img.scale(imageScale);
         const signatureImgSize = signatureImg.scale(signatureScale);
 
         // Draw the main image
         page.drawImage(img, {
-            x: 50 + 2 * columnWidth + 10,
-            y: tableTop - 50 - 2 * rowHeight + (rowHeight - imgSize.height) / 2, // Adjust y to fit in the cell
+            x: 50 + 2 * columnWidth + (columnWidth - imgSize.width) / 2, // Center the image horizontally in the cell
+            y: tableTop - 40 - rowHeight * 2 + (rowHeight - imgSize.height) / 2, // Center the image vertically in the cell
             width: imgSize.width,
             height: imgSize.height,
         });
 
         // Draw the signature image
-        // Draw the signature image with adjusted y-coordinate
         page.drawImage(signatureImg, {
-            x: 50 + 2 * columnWidth + 10,
-            y: tableTop - rowHeight - 180 + (rowHeight - signatureImgSize.height) / 2, // Adjust y further down
+            x: 50 + 2 * columnWidth + (columnWidth - signatureImgSize.width) / 2, // Center the signature horizontally
+            y: tableTop - rowHeight * 7 + (rowHeight - signatureImgSize.height) / 2, // Center the signature vertically in the cell
             width: signatureImgSize.width,
             height: signatureImgSize.height,
         });
-
 
         // Serialize the PDF document
         const pdfBytes = await pdfDoc.save();
@@ -202,6 +200,8 @@ export async function POST(request) {
         await mongoose.disconnect();
     }
 }
+
+
 
 
 // import { NextResponse } from 'next/server';
