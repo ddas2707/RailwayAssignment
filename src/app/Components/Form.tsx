@@ -1,8 +1,9 @@
-"use client";
+"use client"
 import React, { useState } from 'react';
 import Modal from './Modal';
 
 const Form: React.FC = () => {
+  const [step, setStep] = useState(1);
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -12,10 +13,10 @@ const Form: React.FC = () => {
     department: '',
     designation: '',
     placeOfWork: '',
-    code: '', // Add OTP field
+    code: '',
   });
-
-  const [image, setImage] = useState<File | null>(null); // State for the uploaded image 
+  const [image, setImage] = useState<File | null>(null);
+  const [signature, setSignature] = useState<File | null>(null);
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
   const [otpSent, setOtpSent] = useState(false);
@@ -28,10 +29,16 @@ const Form: React.FC = () => {
     });
   };
 
-  // this is the function for handling the images 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files) {
       setImage(e.target.files[0]);
+    }
+  };
+
+
+  const handleSignatureChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files) {
+      setSignature(e.target.files[0]);
     }
   };
 
@@ -54,35 +61,6 @@ const Form: React.FC = () => {
     }
   };
 
-  // const verifyOtp = async () => {
-  //   try {
-  //     const response = await fetch('/api/verify-otp', {
-  //       method: 'POST',
-  //       headers: {
-  //         'Content-Type': 'application/json',
-  //       },
-  //       body: JSON.stringify({ email: formData.email, code: formData.code }), // Send 'code' instead of 'otp'
-  //     });
-
-  //     if (response.ok) {
-  //       const result = await response.json();
-  //       if (result.status === 'approved') {
-  //         setOtpVerified(true);
-  //         setModalMessage('OTP verified successfully!');
-  //       } else {
-  //         setModalMessage('Invalid OTP. Please try again.');
-  //       }
-  //     } else {
-  //       const error = await response.json();
-  //       setModalMessage(`Error verifying OTP1: ${error.message || 'Unknown error'}`);
-  //     }
-  //   } catch (error: any) {
-  //     setModalMessage(`Error verifying OTP2: ${error.message || 'Unknown error'}`);
-  //   } finally {
-  //     setIsModalOpen(true);
-  //   }
-  // };
-
   const verifyOtp = async () => {
     try {
       const response = await fetch('/api/verify-otp', {
@@ -97,7 +75,8 @@ const Form: React.FC = () => {
   
       if (response.ok) {
         setOtpVerified(true);
-        setModalMessage('OTP verified successfully!');
+        setStep(2); // Move to the next step after successful OTP verification
+        setModalMessage('OTP verified successfully! Now you can fill the rest of the form');
       } else {
         setModalMessage(`Invalid OTP. Please try again.`);
       }
@@ -107,54 +86,6 @@ const Form: React.FC = () => {
       setIsModalOpen(true);
     }
   };
-  
-  // const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-  //   e.preventDefault();
-
-  //   if (!otpVerified) {
-  //     setModalMessage('Please verify your OTP before submitting.');
-  //     setIsModalOpen(true);
-  //     return;
-  //   }
-
-  //   const formDataWithImage = new FormData();
-  //   formDataWithImage.append('name', formData.name);
-  //   formDataWithImage.append('email', formData.email);
-  //   formDataWithImage.append('phone', formData.phone);
-  //   formDataWithImage.append('address', formData.address);
-  //   formDataWithImage.append('age', formData.age);
-  //   formDataWithImage.append('department', formData.department);
-  //   formDataWithImage.append('designation', formData.designation);
-  //   formDataWithImage.append('placeOfWork', formData.placeOfWork);
-  //   formDataWithImage.append('code', formData.code);
-  //   if (image) {
-  //     formDataWithImage.append('image', image);
-  //   }
-
-  //   const response = await fetch('/api/submit', {
-  //     method: 'POST',
-  //     headers: {
-  //       'Content-Type': 'application/json',
-  //     },
-  //     body: JSON.stringify(formData),
-  //   });
-
-  //   if (response.ok) {
-  //     setModalMessage('Your data has been submitted successfully!');
-  //     const blob = await response.blob();
-  //     const url = window.URL.createObjectURL(blob);
-  //     const a = document.createElement('a');
-  //     a.href = url;
-  //     a.download = 'user_details.pdf';
-  //     document.body.appendChild(a);
-  //     a.click();
-  //     a.remove();
-  //   } else {
-  //     setModalMessage('Error submitting your data.');
-  //   }
-
-  //   setIsModalOpen(true);
-  // };
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -165,23 +96,25 @@ const Form: React.FC = () => {
       return;
     }
 
-    const formDataWithImage = new FormData();
-    formDataWithImage.append('name', formData.name);
-    formDataWithImage.append('email', formData.email);
-    formDataWithImage.append('phone', formData.phone);
-    formDataWithImage.append('address', formData.address);
-    formDataWithImage.append('age', formData.age);
-    formDataWithImage.append('department', formData.department);
-    formDataWithImage.append('designation', formData.designation);
-    formDataWithImage.append('placeOfWork', formData.placeOfWork);
-    formDataWithImage.append('code', formData.code);
+    const formDataWithFiles = new FormData();
+    formDataWithFiles.append('name', formData.name);
+    formDataWithFiles.append('email', formData.email);
+    formDataWithFiles.append('phone', formData.phone);
+    formDataWithFiles.append('address', formData.address);
+    formDataWithFiles.append('age', formData.age);
+    formDataWithFiles.append('department', formData.department);
+    formDataWithFiles.append('designation', formData.designation);
+    formDataWithFiles.append('placeOfWork', formData.placeOfWork);
+    formDataWithFiles.append('code', formData.code);
     if (image) {
-      formDataWithImage.append('image', image);
+      formDataWithFiles.append('image', image);
     }
-
+    if (signature) {
+      formDataWithFiles.append('signature', signature);
+    }
     const response = await fetch('/api/submit', {
       method: 'POST',
-      body: formDataWithImage, // Send as FormData
+      body: formDataWithFiles,
     });
 
     if (response.ok) {
@@ -199,7 +132,7 @@ const Form: React.FC = () => {
     }
 
     setIsModalOpen(true);
-};
+  };
 
   const closeModal = () => {
     setIsModalOpen(false);
@@ -208,164 +141,185 @@ const Form: React.FC = () => {
   return (
     <div className="max-w-md mx-auto p-4 bg-white rounded-lg shadow-md">
       <form onSubmit={handleSubmit} className="space-y-4">
-        <h2 className="text-xl font-semibold text-gray-700 mb-4">User Form</h2>
-        
-        <div className="flex flex-col">
-          <label htmlFor="name" className="text-gray-600">Name</label>
-          <input
-            id="name"
-            name="name"
-            placeholder="Name"
-            value={formData.name}
-            onChange={handleChange}
-            required
-            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
+      {step === 1 && (
+  <>
+    <h2 className="text-xl font-semibold text-gray-700 mb-4">Step 1: Enter Your Details</h2>
 
-        <div className="flex flex-col">
-          <label htmlFor="email" className="text-gray-600">Email</label>
-          <input
-            id="email"
-            name="email"
-            placeholder="Email"
-            value={formData.email}
-            onChange={handleChange}
-            required
-            className="text-black  border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
+    <div className="flex flex-col">
+      <label htmlFor="name" className="text-gray-600">Name</label>
+      <input
+        id="name"
+        name="name"
+        placeholder="Name"
+        value={formData.name}
+        onChange={handleChange}
+        required
+        className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+      />
+    </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="phone" className="text-gray-600">Phone Number</label>
-          <input
-            id="phone"
-            name="phone"
-            placeholder="Phone Number"
-            value={formData.phone}
-            onChange={handleChange}
-            required
-            className="text-black  border border-gray-300 rounded-lg p-2 mt-1 text-black"
-          />
-        </div>
+    <div className="flex flex-col">
+      <label htmlFor="email" className="text-gray-600">Email</label>
+      <input
+        id="email"
+        name="email"
+        placeholder="Email"
+        value={formData.email}
+        onChange={handleChange}
+        required
+        className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+      />
+    </div>
 
-        <div className="flex flex-col">
-          <label htmlFor="address" className="text-gray-600">Address</label>
-          <input
-            id="address"
-            name="address"
-            placeholder="Address"
-            value={formData.address}
-            onChange={handleChange}
-            required
-            className="text-black  border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
+    <button
+      type="button"
+      onClick={sendOtp}
+      disabled={otpSent}
+      className={`mt-2 py-2 px-4 rounded-lg text-white ${otpSent ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} transition`}
+    >
+      Send OTP
+    </button>
 
-        <div className="flex flex-col">
-          <label htmlFor="age" className="text-gray-600">Age</label>
-          <input
-            id="age"
-            name="age"
-            placeholder="Age"
-            value={formData.age}
-            onChange={handleChange}
-            required
-            className="text-black  border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="department" className="text-gray-600">Department</label>
-          <input
-            id="department"
-            name="department"
-            placeholder="Department"
-            value={formData.department}
-            onChange={handleChange}
-            required
-            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="designation" className="text-gray-600">Designation</label>
-          <input
-            id="designation"
-            name="designation"
-            placeholder="Designation"
-            value={formData.designation}
-            onChange={handleChange}
-            required
-            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
-
-        <div className="flex flex-col">
-          <label htmlFor="placeOfWork" className="text-gray-600">Place of Work</label>
-          <input
-            id="placeOfWork"
-            name="placeOfWork"
-            placeholder="Place of Work"
-            value={formData.placeOfWork}
-            onChange={handleChange}
-            required
-            className="text-black border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
-
-        {/* this is the field for uploading images ---> start */}
-        <div className="flex flex-col">
-          <label htmlFor="image" className="text-gray-600">Upload Image</label>
-          <input
-            id="image"
-            name="image"
-            type="file"
-            onChange={handleImageChange}
-            className="border border-gray-300 rounded-lg p-2 mt-1"
-          />
-        </div>
-        {/* this is the field for uploading images ----> end   */}
-
-
-        {otpSent && (
-          <div className="flex flex-col">
-            <label htmlFor="otp" className="text-gray-600">Enter OTP</label>
-            <input
-              id="code"
-              name="code"
-              placeholder="Enter OTP"
-              value={formData.code}
-              onChange={handleChange}
-              required
-              className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
-            />
-            <button
-              type="button"
-              onClick={verifyOtp}
-              className="mt-2 py-2 px-4 rounded-lg bg-green-500 text-black hover:bg-green-600 transition"
-            >
-              Verify OTP
-            </button>
-          </div>
-        )}
-
+    {otpSent && (
+      <div className="flex flex-col mt-4">
+        <label htmlFor="code" className="text-gray-600">Enter OTP</label>
+        <input
+          id="code"
+          name="code"
+          placeholder="Enter OTP"
+          value={formData.code}
+          onChange={handleChange}
+          required
+          className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
+        />
         <button
           type="button"
-          onClick={sendOtp}
-          disabled={otpSent}
-          className={`mt-2 py-2 px-4 rounded-lg text-white ${otpSent ? 'bg-gray-500' : 'bg-blue-500 hover:bg-blue-600'} transition`}
+          onClick={verifyOtp}
+          className="mt-2 py-2 px-4 rounded-lg bg-green-500 text-black hover:bg-green-600 transition"
         >
-          Send OTP
+          Verify OTP
         </button>
+      </div>
+    )}
+  </>
+)}
 
-        <button
-          type="submit"
-          className="w-full py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
-        >
-          Submit
-        </button>
+
+        {step === 2 && (
+          <>
+            <h2 className="text-xl font-semibold text-gray-700 mb-4">Step 2: Fill Remaining Details</h2>
+
+            <div className="flex flex-col">
+              <label htmlFor="phone" className="text-gray-600">Phone Number</label>
+              <input
+                id="phone"
+                name="phone"
+                placeholder="Phone Number"
+                value={formData.phone}
+                onChange={handleChange}
+                required
+                className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="address" className="text-gray-600">Address</label>
+              <input
+                id="address"
+                name="address"
+                placeholder="Address"
+                value={formData.address}
+                onChange={handleChange}
+                required
+                className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="age" className="text-gray-600">Age</label>
+              <input
+                id="age"
+                name="age"
+                placeholder="Age"
+                value={formData.age}
+                onChange={handleChange}
+                required
+                className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="department" className="text-gray-600">Department</label>
+              <input
+                id="department"
+                name="department"
+                placeholder="Department"
+                value={formData.department}
+                onChange={handleChange}
+                required
+                className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="designation" className="text-gray-600">Designation</label>
+              <input
+                id="designation"
+                name="designation"
+                placeholder="Designation"
+                value={formData.designation}
+                onChange={handleChange}
+                required
+                className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col">
+              <label htmlFor="placeOfWork" className="text-gray-600">Place of Work</label>
+              <input
+                id="placeOfWork"
+                name="placeOfWork"
+                placeholder="Place of Work"
+                value={formData.placeOfWork}
+                onChange={handleChange}
+                required
+                className="text-black border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <div className="flex flex-col">
+            <label htmlFor="image" className="text-gray-600">Upload Image</label>
+              <input
+                id="image"
+                type="file"
+                name="image"
+                onChange={handleImageChange}
+                className="mt-1"
+              />
+            </div>
+
+
+            <div className="flex flex-col">
+              <label htmlFor="signature" className="text-gray-600">Upload Signature</label>
+              <input
+                id="signature"
+                type="file"
+                accept="image/png, image/jpeg"
+                onChange={handleSignatureChange}
+                className="border border-gray-300 rounded-lg p-2 mt-1"
+              />
+            </div>
+
+            <button
+              type="submit"
+              className="mt-4 py-2 px-4 rounded-lg bg-blue-500 text-white hover:bg-blue-600 transition"
+            >
+              Submit
+            </button>
+          </>
+        )}
       </form>
+
       <Modal isOpen={isModalOpen} onClose={closeModal} message={modalMessage} />
     </div>
   );
