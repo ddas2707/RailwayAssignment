@@ -1,5 +1,8 @@
+// src/1.app/pages/layout.tsx
 import type { Metadata } from "next";
 import { Inter } from "next/font/google";
+import Navbar from "./Components/Navbar";
+import bgImage from "../../public/bg1.jpg"
 import "./globals.css";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -16,7 +19,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={inter.className}>{children}</body>
+      <body
+        className="min-h-screen bg-cover bg-center"
+        style={{ backgroundImage: `url(${bgImage.src})` }} // Use imported image
+      >
+        <Navbar />
+        {children}
+      </body>
     </html>
   );
 }
