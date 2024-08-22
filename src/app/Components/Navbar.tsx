@@ -1,4 +1,5 @@
 "use client";
+import Image from "next/image";
 import React from "react";
 import { FaSearch } from "react-icons/fa";
 
@@ -8,7 +9,7 @@ const Navbar: React.FC = () => {
       <nav className="bg-blue-500 p-4 flex items-center justify-between text-white fixed top-0 left-0 w-full z-50">
         {/* Logo */}
         <div className="flex items-center space-x-2">
-          <img src="/icon.webp" alt="Logo" className="h-8 w-8" />
+          <Image src="/icon.webp" alt="Logo" className="h-8 w-8" />
           <span className="text-xl font-semibold">Railway Id Card</span>
         </div>
         <div>
