@@ -1,6 +1,7 @@
-"use client";
+"use client"
 import React, { useState } from "react";
 import Modal from "./Modal";
+import AdminDashboard from "./AdminDashboard"; // Import your Dashboard component
 
 const Form: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -115,6 +116,7 @@ const Form: React.FC = () => {
     if (signature) {
       formDataWithFiles.append("signature", signature);
     }
+
     const response = await fetch("/api/submit", {
       method: "POST",
       body: formDataWithFiles,
@@ -141,6 +143,7 @@ const Form: React.FC = () => {
     setIsModalOpen(false);
   };
 
+  
   return (
     <div className="min-h-screen flex items-center justify-center relative">
     <div className="max-w-2xl w-full p-8 bg-gray-100 rounded-lg shadow-md">
@@ -150,7 +153,6 @@ const Form: React.FC = () => {
               <h2 className="text-xl font-semibold text-gray-700 mb-4">
                 Step 1: Enter Your Details
               </h2>
-
               <div className="flex flex-col">
                 <label htmlFor="name" className="text-gray-600">
                   Name
@@ -180,7 +182,6 @@ const Form: React.FC = () => {
                   className="text-black border border-gray-300 rounded-lg p-2 mt-1"
                 />
               </div>
-
               <button
                 type="button"
                 onClick={sendOtp}

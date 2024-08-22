@@ -21,7 +21,7 @@ async function connectToDatabase() {
         cached.promise = mongoose.connect(MONGODB_URI, {
             // No need for useNewUrlParser and useUnifiedTopology in Mongoose 6+
         }).then((mongoose) => {
-            console.log("Mongodb successfully connected");
+            console.log("Mongodb successfully connected mongodb.js");
             return mongoose;
         }).catch((error) => {
             console.error("Mongodb connection error:", error);
