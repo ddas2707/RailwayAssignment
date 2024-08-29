@@ -1,7 +1,6 @@
-"use client"
+"use client";
 import React, { useState } from "react";
 import Modal from "./Modal";
-import AdminDashboard from "./AdminDashboard"; // Import your Dashboard component
 
 const Form: React.FC = () => {
   const [step, setStep] = useState(1);
@@ -132,6 +131,24 @@ const Form: React.FC = () => {
       document.body.appendChild(a);
       a.click();
       a.remove();
+
+      // Clear form data after successful submission
+      setFormData({
+        name: "",
+        email: "",
+        phone: "",
+        address: "",
+        age: "",
+        department: "",
+        designation: "",
+        placeOfWork: "",
+        code: "",
+      });
+      setImage(null);
+      setSignature(null);
+      setOtpSent(false);
+      setOtpVerified(false);
+      setStep(1);
     } else {
       setModalMessage("Error submitting your data.");
     }
@@ -143,10 +160,9 @@ const Form: React.FC = () => {
     setIsModalOpen(false);
   };
 
-  
   return (
     <div className="min-h-screen flex items-center justify-center relative">
-    <div className="max-w-2xl w-full p-8 bg-gray-100 rounded-lg shadow-md">
+      <div className="max-w-2xl w-full p-8 bg-gray-100 rounded-lg shadow-md">
         <form onSubmit={handleSubmit} className="space-y-4">
           {step === 1 && (
             <>
@@ -318,7 +334,7 @@ const Form: React.FC = () => {
               </div>
 
               <div className="flex flex-col">
-                <label htmlFor="image" className="text-gray-600">
+                <label htmlFor="image" className="text-black">
                   Upload Image
                 </label>
                 <input
@@ -326,12 +342,12 @@ const Form: React.FC = () => {
                   name="image"
                   type="file"
                   onChange={handleImageChange}
-                  className="border border-gray-300 rounded-lg p-2 mt-1"
+                  className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
                 />
               </div>
 
               <div className="flex flex-col">
-                <label htmlFor="signature" className="text-gray-600">
+                <label htmlFor="signature" className="text-black">
                   Upload Signature
                 </label>
                 <input
@@ -339,7 +355,7 @@ const Form: React.FC = () => {
                   name="signature"
                   type="file"
                   onChange={handleSignatureChange}
-                  className="border border-gray-300 rounded-lg p-2 mt-1"
+                  className="border border-gray-300 rounded-lg p-2 mt-1 text-black"
                 />
               </div>
 
@@ -359,6 +375,8 @@ const Form: React.FC = () => {
 };
 
 export default Form;
+
+
 
 // "use client"
 // import React, { useState } from 'react';
