@@ -1,7 +1,6 @@
 "use client";
 import Image from "next/image";
 import React from "react";
-import { FaSearch } from "react-icons/fa";
 
 const Navbar: React.FC = () => {
   return (
